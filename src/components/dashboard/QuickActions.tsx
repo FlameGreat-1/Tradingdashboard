@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -8,7 +7,7 @@ import Icon from '@/components/ui/Icon';
 interface QuickAction {
   id: string;
   label: string;
-  icon: string;
+  icon: 'grid' | 'plus' | 'swap' | 'chart' | 'wallet' | 'search' | 'chevronDown' | 'settings' | 'headphones' | 'menu';
   variant?: 'primary' | 'secondary' | 'ghost';
   onClick: () => void;
 }
@@ -20,38 +19,46 @@ interface QuickActionsProps {
 
 const defaultActions: QuickAction[] = [
   {
-    id: 'new-trade',
-    label: 'New Trade',
+    id: 'new-order',
+    label: 'New Order',
     icon: 'plus',
     variant: 'primary',
-    onClick: () => console.log('New Trade'),
+    onClick: () => console.log('New Order clicked'),
   },
   {
-    id: 'close-all',
-    label: 'Close All',
-    icon: 'swap',
+    id: 'market-watch',
+    label: 'Market Watch',
+    icon: 'chart',
     variant: 'secondary',
-    onClick: () => console.log('Close All'),
+    onClick: () => console.log('Market Watch clicked'),
   },
   {
-    id: 'deposit',
-    label: 'Deposit',
+    id: 'portfolio',
+    label: 'Portfolio',
     icon: 'wallet',
     variant: 'secondary',
-    onClick: () => console.log('Deposit'),
+    onClick: () => console.log('Portfolio clicked'),
+  },
+  {
+    id: 'analysis',
+    label: 'Analysis',
+    icon: 'grid',
+    variant: 'ghost',
+    onClick: () => console.log('Analysis clicked'),
   },
 ];
 
-export const QuickActions: React.FC<QuickActionsProps> = ({
+const QuickActions: React.FC<QuickActionsProps> = ({
   actions = defaultActions,
   className = '',
 }) => {
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
+    <div className={`flex flex-wrap gap-3 ${className}`}>
       {actions.map((action) => (
         <Button
           key={action.id}
-          variant={action.variant}
+          variant={action.variant || 'secondary'}
+          size="sm"
           onClick={action.onClick}
           className="flex items-center gap-2"
         >
