@@ -224,6 +224,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           flex-direction: column;
           align-items: center;
           margin-bottom: 32px;
+          margin-top: auto;
         }
 
         .action-button {
@@ -286,6 +287,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
           .actions-container {
             margin-bottom: 60px;
+            padding-bottom: 0;
           }
         }
 
@@ -295,17 +297,28 @@ const Sidebar: React.FC<SidebarProps> = ({
           }
 
           .logo-container {
-            height: 28px;
-            margin-bottom: 1px;
+            height: 40px;
           }
 
           .nav-button {
-            height: 38px;
-            margin-bottom: 0px;
+            height: 48px;
           }
 
           .actions-container {
-            margin-bottom: 8px;
+            margin-bottom: 100px;
+            padding-bottom: 0;
+          }
+        }
+
+        @media (max-height: 700px) {
+          .actions-container {
+            margin-bottom: 80px !important;
+          }
+        }
+
+        @media (max-height: 600px) {
+          .actions-container {
+            margin-bottom: 60px !important;
           }
         }
       `}</style>
