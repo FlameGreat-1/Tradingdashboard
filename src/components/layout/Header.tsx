@@ -195,6 +195,8 @@ const Header: React.FC<HeaderProps> = ({
           background: transparent;
           border: none;
           height: 32px;
+          position: absolute;
+          right: 12px;
         }
 
         .hamburger-line {
@@ -472,15 +474,15 @@ const Header: React.FC<HeaderProps> = ({
               className="cursor-pointer select-none"
               onClick={handleAvatarClick}
             />
+          </div>
 
-            <div 
-              className={`hamburger-menu ${isMobileMenuOpen ? 'open' : ''}`}
-              onClick={toggleMobileMenu}
-            >
-              <div className="hamburger-line"></div>
-              <div className="hamburger-line"></div>
-              <div className="hamburger-line"></div>
-            </div>
+          <div 
+            className={`hamburger-menu ${isMobileMenuOpen ? 'open' : ''}`}
+            onClick={toggleMobileMenu}
+          >
+            <div className="hamburger-line"></div>
+            <div className="hamburger-line"></div>
+            <div className="hamburger-line"></div>
           </div>
         </div>
       </header>
@@ -505,33 +507,6 @@ const Header: React.FC<HeaderProps> = ({
                 className="search-input"
               />
             </form>
-          </div>
-
-          <div className="mobile-menu-item" onClick={handleAccountClick}>
-            <Image
-              src="/assets/header/icons/account.svg"
-              alt="Account"
-              width={120}
-              height={32}
-              className="cursor-pointer select-none"
-            />
-          </div>
-
-          <div className="mobile-menu-item" onClick={handleNotificationClick}>
-            <div className="flex items-center justify-between">
-              <Image
-                src="/assets/header/icons/notification.svg"
-                alt="Notifications"
-                width={28}
-                height={28}
-                className="cursor-pointer select-none"
-              />
-              {notificationCount > 0 && (
-                <span className="notification-badge" style={{ position: 'static' }}>
-                  {notificationCount}
-                </span>
-              )}
-            </div>
           </div>
 
           <div className="mobile-menu-item">
@@ -602,16 +577,6 @@ const Header: React.FC<HeaderProps> = ({
                 {formatTime(currentTime)} {getTimezoneOffset()}
               </span>
             </div>
-          </div>
-
-          <div className="mobile-menu-item" onClick={handleAvatarClick}>
-            <Image
-              src="/assets/header/icons/avater.svg"
-              alt="User avatar"
-              width={110}
-              height={110}
-              className="cursor-pointer select-none"
-            />
           </div>
         </div>
       )}
