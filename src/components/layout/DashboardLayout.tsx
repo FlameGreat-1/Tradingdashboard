@@ -74,7 +74,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           bottom: 0,
           width: 'calc(100% - 48px)',
           height: 'calc(100% - 48px)',
-          overflow: 'auto', // RESTORED SCROLLING
+          overflow: 'auto',
           backgroundColor: 'var(--color-background-main)'
         }}
       >

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
@@ -66,6 +66,18 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const [activeView, setActiveView] = useState('dashboard');
   const [hoveredAction, setHoveredAction] = useState<'settings' | 'support' | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleSettingsClick = useCallback(() => {
     onSettingsClick?.();
@@ -86,13 +98,15 @@ const Sidebar: React.FC<SidebarProps> = ({
   }, [pathname, activeView]);
 
   const handleMouseEnter = useCallback((label: string, event: React.MouseEvent) => {
+    if (isMobile) return;
+    
     const rect = event.currentTarget.getBoundingClientRect();
     setTooltipPosition({
       top: rect.top + rect.height / 2,
       left: width + 12,
     });
     setHoveredItem(label);
-  }, [width]);
+  }, [width, isMobile]);
 
   const handleMouseLeave = useCallback(() => {
     setHoveredItem(null);
@@ -102,7 +116,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     const view = href === '/dashboard' ? 'dashboard' : href.split('/').pop();
     setActiveView(view || 'dashboard');
     
-    // Always open menu view for dashboard/menu
     if (href === '/dashboard') {
       window.dispatchEvent(new CustomEvent('sidebar:navigate', { detail: { view: 'dashboard' } }));
     } else {
@@ -111,6 +124,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   }, []);
 
   const handleActionMouseEnter = useCallback((action: 'settings' | 'support', event: React.MouseEvent) => {
+    if (isMobile) return;
+    
     setHoveredAction(action);
     const rect = event.currentTarget.getBoundingClientRect();
     setTooltipPosition({
@@ -118,7 +133,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       left: width + 12,
     });
     setHoveredItem(action === 'settings' ? 'Settings' : 'Support');
-  }, [width]);
+  }, [width, isMobile]);
 
   const handleActionMouseLeave = useCallback(() => {
     setHoveredAction(null);
@@ -126,229 +141,296 @@ const Sidebar: React.FC<SidebarProps> = ({
   }, []);
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        left: 0,
-        top: 0,
-        width: `${width}px`,
-        height: '100vh',
-        zIndex: 50,
-        display: 'flex',
-        flexDirection: 'column',
-        background: 'linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%)',
-        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
-        overflow: 'hidden'
-      }}
-    >
-      <div 
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          height: '40px',
-          marginBottom: '8px',
-          padding: 0,
-          cursor: 'pointer'
-        }}
-        onClick={() => handleNavClick('/dashboard')}
-      >
-        <Image
-          src="/assets/sidebar/icons/logo.svg"
-          alt="Logo"
-          width={28}
-          height={28}
-          priority
-          style={{ 
-            userSelect: 'none',
-          }}
-        />
-      </div>
+    <>
+      <style jsx>{`
+        .sidebar-container {
+          position: fixed;
+          left: 0;
+          top: 0;
+          width: ${width}px;
+          height: 100vh;
+          z-index: 50;
+          display: flex;
+          flex-direction: column;
+          background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
+          border-right: 1px solid rgba(255, 255, 255, 0.08);
+          overflow: hidden;
+        }
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 0 }}>
-        <div style={{ paddingTop: 0 }}>
-          {NAVIGATION_ITEMS.map((item, index) => {
-            const iconSize = item.iconSize || 28;
-            const isActive = isActiveRoute(item.href);
-            
-            return (
-              <button
-                key={item.href}
-                onClick={() => handleNavClick(item.href)}
-                style={{
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '100%',
-                  height: '48px',
-                  marginBottom: index === NAVIGATION_ITEMS.length - 1 ? '0px' : '4px',
-                  transition: 'all 0.2s ease-in-out',
-                  cursor: 'pointer',
-                  padding: 0,
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  borderRadius: '8px'
-                }}
-                aria-label={item.ariaLabel}
-                onMouseEnter={(e) => {
-                  handleMouseEnter(item.label, e);
-                }}
-                onMouseLeave={(e) => {
-                  handleMouseLeave();
-                }}
-              >
-                {isActive && (
-                  <>
-                    <div 
-                      style={{
-                        position: 'absolute',
-                        left: '2px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        width: '2px',
-                        height: '24px',
-                        backgroundColor: '#E85102',
-                        borderRadius: '8px',
-                      }}
-                    />
-                    <svg
-                      style={{
-                        position: 'absolute',
-                        inset: '6px',
-                        pointerEvents: 'none',
-                      }}
-                      viewBox="0 0 40 40"
-                    >
-                      <defs>
-                        <radialGradient id="cellGradient">
-                          <stop offset="0%" stopColor="rgba(232, 81, 2, 0)" />
-                          <stop offset="70%" stopColor="rgba(232, 81, 2, 0.08)" />
-                          <stop offset="100%" stopColor="rgba(232, 81, 2, 0.15)" />
-                        </radialGradient>
-                      </defs>
-                      <path
-                        d="M 20 2 A 18 18 0 1 1 19.99 2"
-                        fill="url(#cellGradient)"
-                        stroke="none"
-                      />
-                    </svg>
-                  </>
-                )}
+        .logo-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 40px;
+          margin-bottom: 8px;
+          padding: 0;
+          cursor: pointer;
+        }
 
-                <div style={{
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: `${iconSize}px`,
-                  height: `${iconSize}px`,
-                }}>
-                  <Image
-                    src={item.icon}
-                    alt={item.label}
-                    width={iconSize}
-                    height={iconSize}
-                    style={{ 
-                      userSelect: 'none',
-                      transition: 'all 0.2s ease-in-out'
-                    }}
-                  />
-                </div>
-              </button>
-            );
-          })}
-        </div>
-        
-        <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '32px' }}>
+        .nav-button {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 48px;
+          margin-bottom: 4px;
+          transition: all 0.2s ease-in-out;
+          cursor: pointer;
+          padding: 0;
+          background-color: transparent;
+          border: none;
+          border-radius: 8px;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        .nav-button:last-child {
+          margin-bottom: 0;
+        }
+
+        .nav-button:active {
+          transform: scale(0.95);
+        }
+
+        .active-indicator {
+          position: absolute;
+          left: 2px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 2px;
+          height: 24px;
+          background-color: #E85102;
+          border-radius: 8px;
+        }
+
+        .active-glow {
+          position: absolute;
+          inset: 6px;
+          pointer-events: none;
+        }
+
+        .icon-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s ease-in-out;
+        }
+
+        .actions-container {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-bottom: 32px;
+        }
+
+        .action-button {
+          position: absolute;
+          left: 0;
+          width: 100%;
+          height: 40px;
+          background: transparent;
+          border: 0;
+          cursor: pointer;
+          transition: all 0.2s ease-in-out;
+          padding: 0;
+          border-radius: 8px;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        .action-button:active {
+          transform: scale(0.95);
+        }
+
+        .action-button.settings {
+          top: 0;
+        }
+
+        .action-button.support {
+          bottom: 0;
+        }
+
+        .tooltip {
+          position: fixed;
+          background-color: #1a1a1a;
+          color: #ffffff;
+          padding: 6px 12px;
+          border-radius: 6px;
+          font-size: 13px;
+          font-weight: 500;
+          white-space: nowrap;
+          pointer-events: none;
+          z-index: 9999;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+          border: 1px solid #2a2a2a;
+          transform: translateY(-50%);
+        }
+
+        @media (max-width: 768px) {
+          .sidebar-container {
+            width: ${width}px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+          }
+
+          .logo-container {
+            height: 36px;
+            margin-bottom: 4px;
+          }
+
+          .nav-button {
+            height: 44px;
+            margin-bottom: 2px;
+          }
+
+          .actions-container {
+            margin-bottom: 24px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .sidebar-container {
+            width: ${width}px;
+          }
+
+          .logo-container {
+            height: 34px;
+          }
+
+          .nav-button {
+            height: 42px;
+          }
+
+          .actions-container {
+            margin-bottom: 20px;
+          }
+        }
+      `}</style>
+
+      <div className="sidebar-container">
+        <div 
+          className="logo-container"
+          onClick={() => handleNavClick('/dashboard')}
+        >
           <Image
-            src="/assets/sidebar/icons/Setting-support.svg"
-            alt="Settings and Support"
-            width={32}
-            height={53}
+            src="/assets/sidebar/icons/logo.svg"
+            alt="Logo"
+            width={28}
+            height={28}
+            priority
             style={{ 
               userSelect: 'none',
-              display: 'block'
-            }}
-          />
-          
-          <button
-            type="button"
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '40px',
-              background: 'transparent',
-              border: 0,
-              cursor: 'pointer',
-              transition: 'all 0.2s ease-in-out',
-              padding: 0,
-              borderRadius: '8px'
-            }}
-            aria-label="Open Settings"
-            onClick={handleSettingsClick}
-            onMouseEnter={(e) => {
-              handleActionMouseEnter('settings', e);
-            }}
-            onMouseLeave={(e) => {
-              handleActionMouseLeave();
-            }}
-          />
-          
-          <button
-            type="button"
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              width: '100%',
-              height: '40px',
-              background: 'transparent',
-              border: 0,
-              cursor: 'pointer',
-              transition: 'all 0.2s ease-in-out',
-              padding: 0,
-              borderRadius: '8px'
-            }}
-            aria-label="Get Support"
-            onClick={handleSupportClick}
-            onMouseEnter={(e) => {
-              handleActionMouseEnter('support', e);
-            }}
-            onMouseLeave={(e) => {
-              handleActionMouseLeave();
             }}
           />
         </div>
-      </div>
 
-      {hoveredItem && (
-        <div
-          style={{
-            position: 'fixed',
-            left: `${tooltipPosition.left}px`,
-            top: `${tooltipPosition.top}px`,
-            backgroundColor: '#1a1a1a',
-            color: '#ffffff',
-            padding: '6px 12px',
-            borderRadius: '6px',
-            fontSize: '13px',
-            fontWeight: 500,
-            whiteSpace: 'nowrap',
-            pointerEvents: 'none',
-            zIndex: 9999,
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
-            border: '1px solid #2a2a2a',
-            transform: 'translateY(-50%)',
-          }}
-        >
-          {hoveredItem}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 0 }}>
+          <div style={{ paddingTop: 0 }}>
+            {NAVIGATION_ITEMS.map((item) => {
+              const iconSize = item.iconSize || 28;
+              const isActive = isActiveRoute(item.href);
+              
+              return (
+                <button
+                  key={item.href}
+                  onClick={() => handleNavClick(item.href)}
+                  className="nav-button"
+                  aria-label={item.ariaLabel}
+                  onMouseEnter={(e) => handleMouseEnter(item.label, e)}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  {isActive && (
+                    <>
+                      <div className="active-indicator" />
+                      <svg
+                        className="active-glow"
+                        viewBox="0 0 40 40"
+                      >
+                        <defs>
+                          <radialGradient id="cellGradient">
+                            <stop offset="0%" stopColor="rgba(232, 81, 2, 0)" />
+                            <stop offset="70%" stopColor="rgba(232, 81, 2, 0.08)" />
+                            <stop offset="100%" stopColor="rgba(232, 81, 2, 0.15)" />
+                          </radialGradient>
+                        </defs>
+                        <path
+                          d="M 20 2 A 18 18 0 1 1 19.99 2"
+                          fill="url(#cellGradient)"
+                          stroke="none"
+                        />
+                      </svg>
+                    </>
+                  )}
+
+                  <div 
+                    className="icon-wrapper"
+                    style={{
+                      width: `${iconSize}px`,
+                      height: `${iconSize}px`,
+                    }}
+                  >
+                    <Image
+                      src={item.icon}
+                      alt={item.label}
+                      width={iconSize}
+                      height={iconSize}
+                      style={{ 
+                        userSelect: 'none',
+                        transition: 'all 0.2s ease-in-out'
+                      }}
+                    />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          
+          <div className="actions-container">
+            <Image
+              src="/assets/sidebar/icons/Setting-support.svg"
+              alt="Settings and Support"
+              width={32}
+              height={53}
+              style={{ 
+                userSelect: 'none',
+                display: 'block'
+              }}
+            />
+            
+            <button
+              type="button"
+              className="action-button settings"
+              aria-label="Open Settings"
+              onClick={handleSettingsClick}
+              onMouseEnter={(e) => handleActionMouseEnter('settings', e)}
+              onMouseLeave={handleActionMouseLeave}
+            />
+            
+            <button
+              type="button"
+              className="action-button support"
+              aria-label="Get Support"
+              onClick={handleSupportClick}
+              onMouseEnter={(e) => handleActionMouseEnter('support', e)}
+              onMouseLeave={handleActionMouseLeave}
+            />
+          </div>
         </div>
-      )}
-    </div>
+
+        {hoveredItem && !isMobile && (
+          <div
+            className="tooltip"
+            style={{
+              left: `${tooltipPosition.left}px`,
+              top: `${tooltipPosition.top}px`,
+            }}
+          >
+            {hoveredItem}
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

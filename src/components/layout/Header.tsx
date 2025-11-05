@@ -20,8 +20,11 @@ const Header: React.FC<HeaderProps> = ({
   const [currentTime, setCurrentTime] = useState(new Date());
   const [searchQuery, setSearchQuery] = useState('');
   const [notificationCount] = useState(3);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -34,6 +37,22 @@ const Header: React.FC<HeaderProps> = ({
 
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMobileMenuOpen]);
 
   const formatTime = useCallback((date: Date) => {
     const hours = date.getHours().toString().padStart(2, '0');
@@ -48,6 +67,7 @@ const Header: React.FC<HeaderProps> = ({
   }, []);
 
   const handleSearchClick = useCallback(() => {
+    setIsSearchExpanded(true);
     onSearchClick?.();
     searchInputRef.current?.focus();
     window.dispatchEvent(new CustomEvent('header:search-click'));
@@ -81,6 +101,10 @@ const Header: React.FC<HeaderProps> = ({
 
   const handleAvatarClick = useCallback(() => {
     window.dispatchEvent(new CustomEvent('header:avatar-click'));
+  }, []);
+
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev);
   }, []);
 
   if (!isClient) {
@@ -156,9 +180,160 @@ const Header: React.FC<HeaderProps> = ({
           border: 2px solid #1a1a1a;
         }
 
+        .hamburger-menu {
+          display: none;
+          flex-direction: column;
+          gap: 4px;
+          cursor: pointer;
+          padding: 6px;
+          align-items: center;
+          justify-content: center;
+          background: transparent;
+          border: none;
+          height: 32px;
+        }
+
+        .hamburger-line {
+          width: 20px;
+          height: 2px;
+          background: #ffffff;
+          transition: all 0.3s ease;
+        }
+
+        .hamburger-menu.open .hamburger-line:nth-child(1) {
+          transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger-menu.open .hamburger-line:nth-child(2) {
+          opacity: 0;
+        }
+
+        .hamburger-menu.open .hamburger-line:nth-child(3) {
+          transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        .mobile-dropdown {
+          position: fixed;
+          top: 50px;
+          right: 0;
+          width: 280px;
+          max-height: calc(100vh - 50px);
+          background: linear-gradient(180deg, #1a1a1a 0%, #232323 100%);
+          border-left: 1px solid #374151;
+          box-shadow: -4px 0 12px rgba(0, 0, 0, 0.5);
+          overflow-y: auto;
+          z-index: 50;
+          animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+          from {
+            transform: translateX(100%);
+          }
+          to {
+            transform: translateX(0);
+          }
+        }
+
+        .mobile-menu-item {
+          padding: 16px 20px;
+          border-bottom: 1px solid #374151;
+          cursor: pointer;
+          transition: background 0.2s ease;
+        }
+
+        .mobile-menu-item:hover {
+          background: rgba(255, 255, 255, 0.05);
+        }
+
+        .mobile-menu-label {
+          font-size: 10px;
+          color: #9ca3af;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          margin-bottom: 4px;
+        }
+
+        .mobile-menu-value {
+          font-size: 14px;
+          color: #ffffff;
+          font-weight: 600;
+        }
+
+        .mobile-search-container {
+          padding: 12px 20px;
+          border-bottom: 1px solid #374151;
+        }
+
+        .mobile-search-input {
+          width: 100%;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid #374151;
+          border-radius: 6px;
+          padding: 10px 12px;
+          color: #ffffff;
+          font-size: 14px;
+          outline: none;
+        }
+
+        .mobile-search-input:focus {
+          border-color: #6366f1;
+        }
+
+        .mobile-search-input::placeholder {
+          color: #6b7280;
+        }
+
+        @media (max-width: 1280px) {
+          .header-stats .divider:nth-of-type(n+4) {
+            display: none;
+          }
+          .header-stats > *:nth-child(n+9) {
+            display: none;
+          }
+        }
+
+        @media (max-width: 1024px) {
+          .header-stats .divider:nth-of-type(n+3) {
+            display: none;
+          }
+          .header-stats > *:nth-child(n+7) {
+            display: none;
+          }
+        }
+
         @media (max-width: 768px) {
+          .header-container {
+            left: ${sidebarWidth}px;
+          }
+          
           .header-stats {
             display: none;
+          }
+
+          .hamburger-menu {
+            display: flex;
+          }
+
+          .mobile-dropdown {
+            width: 100%;
+            max-width: 320px;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .header-container {
+            left: 0;
+            padding-left: 60px;
+            padding-right: 12px;
+          }
+
+          .mobile-dropdown {
+            left: 0;
+            right: 0;
+            width: 100%;
+            max-width: 100%;
+            border-left: none;
           }
         }
       `}</style>
@@ -255,7 +430,7 @@ const Header: React.FC<HeaderProps> = ({
             </form>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="desktop-actions flex items-center gap-2">
             <Image
               src="/assets/header/icons/account.svg"
               alt="Account"
@@ -288,8 +463,90 @@ const Header: React.FC<HeaderProps> = ({
               onClick={handleAvatarClick}
             />
           </div>
+
+        </div>
+
+        <div 
+          className={`hamburger-menu ${isMobileMenuOpen ? 'open' : ''}`}
+          onClick={toggleMobileMenu}
+        >
+          <div className="hamburger-line"></div>
+          <div className="hamburger-line"></div>
+          <div className="hamburger-line"></div>
         </div>
       </header>
+
+      {isMobileMenuOpen && (
+        <div ref={mobileMenuRef} className="mobile-dropdown">
+          <div className="mobile-search-container">
+            <form onSubmit={handleSearchSubmit}>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                placeholder="Search..."
+                className="mobile-search-input"
+              />
+            </form>
+          </div>
+
+          <div className="mobile-menu-item" onClick={handleAccountClick}>
+            <div className="mobile-menu-label">Account</div>
+            <div className="mobile-menu-value">View Details</div>
+          </div>
+
+          <div className="mobile-menu-item" onClick={handleNotificationClick}>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="mobile-menu-label">Notifications</div>
+                <div className="mobile-menu-value">View All</div>
+              </div>
+              {notificationCount > 0 && (
+                <span className="notification-badge" style={{ position: 'static' }}>
+                  {notificationCount}
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="mobile-menu-item">
+            <div className="mobile-menu-label">Balance</div>
+            <div className="mobile-menu-value">$0.00</div>
+          </div>
+
+          <div className="mobile-menu-item">
+            <div className="mobile-menu-label">Equity</div>
+            <div className="mobile-menu-value">$0.00</div>
+          </div>
+
+          <div className="mobile-menu-item">
+            <div className="mobile-menu-label">Margin</div>
+            <div className="mobile-menu-value">$0.00</div>
+          </div>
+
+          <div className="mobile-menu-item">
+            <div className="mobile-menu-label">Margin Level</div>
+            <div className="mobile-menu-value">0.00%</div>
+          </div>
+
+          <div className="mobile-menu-item">
+            <div className="mobile-menu-label">Total</div>
+            <div className="mobile-menu-value">$0.00</div>
+          </div>
+
+          <div className="mobile-menu-item">
+            <div className="mobile-menu-label">Time Zone</div>
+            <div className="mobile-menu-value">
+              {formatTime(currentTime)} {getTimezoneOffset()}
+            </div>
+          </div>
+
+          <div className="mobile-menu-item" onClick={handleAvatarClick}>
+            <div className="mobile-menu-label">Profile</div>
+            <div className="mobile-menu-value">View Profile</div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
