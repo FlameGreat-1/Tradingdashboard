@@ -40,8 +40,12 @@ const Header: React.FC<HeaderProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
-        setIsMobileMenuOpen(false);
+      const target = event.target as Node;
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(target)) {
+        const hamburger = document.querySelector('.hamburger-menu');
+        if (hamburger && !hamburger.contains(target)) {
+          setIsMobileMenuOpen(false);
+        }
       }
     };
 
@@ -240,6 +244,9 @@ const Header: React.FC<HeaderProps> = ({
           border-bottom: 1px solid #374151;
           cursor: pointer;
           transition: background 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .mobile-menu-item:hover {
@@ -263,6 +270,9 @@ const Header: React.FC<HeaderProps> = ({
         .mobile-search-container {
           padding: 12px 20px;
           border-bottom: 1px solid #374151;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .mobile-search-input {
@@ -478,28 +488,44 @@ const Header: React.FC<HeaderProps> = ({
       {isMobileMenuOpen && (
         <div ref={mobileMenuRef} className="mobile-dropdown">
           <div className="mobile-search-container">
-            <form onSubmit={handleSearchSubmit}>
+            <form onSubmit={handleSearchSubmit} className="search-container">
+              <Image
+                src="/assets/header/icons/search.svg"
+                alt="Search"
+                width={160}
+                height={40}
+                className="cursor-pointer select-none"
+                onClick={handleSearchClick}
+              />
               <input
+                ref={searchInputRef}
                 type="text"
                 value={searchQuery}
                 onChange={handleSearchChange}
-                placeholder="Search..."
-                className="mobile-search-input"
+                className="search-input"
               />
             </form>
           </div>
 
           <div className="mobile-menu-item" onClick={handleAccountClick}>
-            <div className="mobile-menu-label">Account</div>
-            <div className="mobile-menu-value">View Details</div>
+            <Image
+              src="/assets/header/icons/account.svg"
+              alt="Account"
+              width={120}
+              height={32}
+              className="cursor-pointer select-none"
+            />
           </div>
 
           <div className="mobile-menu-item" onClick={handleNotificationClick}>
             <div className="flex items-center justify-between">
-              <div>
-                <div className="mobile-menu-label">Notifications</div>
-                <div className="mobile-menu-value">View All</div>
-              </div>
+              <Image
+                src="/assets/header/icons/notification.svg"
+                alt="Notifications"
+                width={28}
+                height={28}
+                className="cursor-pointer select-none"
+              />
               {notificationCount > 0 && (
                 <span className="notification-badge" style={{ position: 'static' }}>
                   {notificationCount}
@@ -509,40 +535,83 @@ const Header: React.FC<HeaderProps> = ({
           </div>
 
           <div className="mobile-menu-item">
-            <div className="mobile-menu-label">Balance</div>
-            <div className="mobile-menu-value">$0.00</div>
+            <Image
+              src="/assets/header/icons/balance.svg"
+              alt="Balance"
+              width={75}
+              height={32}
+              className="select-none"
+            />
           </div>
 
           <div className="mobile-menu-item">
-            <div className="mobile-menu-label">Equity</div>
-            <div className="mobile-menu-value">$0.00</div>
+            <Image
+              src="/assets/header/icons/equity.svg"
+              alt="Equity"
+              width={75}
+              height={32}
+              className="select-none"
+            />
           </div>
 
           <div className="mobile-menu-item">
-            <div className="mobile-menu-label">Margin</div>
-            <div className="mobile-menu-value">$0.00</div>
+            <div className="flex items-center gap-2">
+              <Image
+                src="/assets/header/icons/remain.svg"
+                alt="Margin"
+                width={28}
+                height={28}
+                className="select-none"
+              />
+              <Image
+                src="/assets/header/icons/margin.svg"
+                alt="Margin"
+                width={110}
+                height={32}
+                className="select-none"
+              />
+            </div>
           </div>
 
           <div className="mobile-menu-item">
-            <div className="mobile-menu-label">Margin Level</div>
-            <div className="mobile-menu-value">0.00%</div>
+            <Image
+              src="/assets/header/icons/margin-level.svg"
+              alt="Margin Level"
+              width={75}
+              height={32}
+              className="select-none"
+            />
           </div>
 
           <div className="mobile-menu-item">
-            <div className="mobile-menu-label">Total</div>
-            <div className="mobile-menu-value">$0.00</div>
+            <Image
+              src="/assets/header/icons/total.svg"
+              alt="Total"
+              width={110}
+              height={32}
+              className="select-none"
+            />
           </div>
 
           <div className="mobile-menu-item">
-            <div className="mobile-menu-label">Time Zone</div>
-            <div className="mobile-menu-value">
-              {formatTime(currentTime)} {getTimezoneOffset()}
+            <div className="flex flex-col items-start">
+              <span className="text-[10px] text-gray-400 uppercase tracking-wide">
+                Time Zone
+              </span>
+              <span className="text-[13px] text-white font-semibold">
+                {formatTime(currentTime)} {getTimezoneOffset()}
+              </span>
             </div>
           </div>
 
           <div className="mobile-menu-item" onClick={handleAvatarClick}>
-            <div className="mobile-menu-label">Profile</div>
-            <div className="mobile-menu-value">View Profile</div>
+            <Image
+              src="/assets/header/icons/avater.svg"
+              alt="User avatar"
+              width={110}
+              height={110}
+              className="cursor-pointer select-none"
+            />
           </div>
         </div>
       )}
