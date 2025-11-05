@@ -143,19 +143,7 @@ const nextConfig: NextConfig = {
 
   experimental: {
     optimizePackageImports: ['react', 'react-dom'],
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
-      },
-    },
   },
 };
 
 export default nextConfig;
-
-
-
-
