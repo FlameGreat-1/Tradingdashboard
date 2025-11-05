@@ -275,17 +275,17 @@ const Sidebar: React.FC<SidebarProps> = ({
           }
 
           .logo-container {
-            height: 36px;
-            margin-bottom: 4px;
+            height: 40px;
+            margin-bottom: 8px;
           }
 
           .nav-button {
-            height: 44px;
-            margin-bottom: 2px;
+            height: 48px;
+            margin-bottom: 4px;
           }
 
           .actions-container {
-            margin-bottom: 24px;
+            margin-bottom: 60px;
           }
         }
 
@@ -295,15 +295,17 @@ const Sidebar: React.FC<SidebarProps> = ({
           }
 
           .logo-container {
-            height: 34px;
+            height: 28px;
+            margin-bottom: 1px;
           }
 
           .nav-button {
-            height: 42px;
+            height: 38px;
+            margin-bottom: 0px;
           }
 
           .actions-container {
-            margin-bottom: 20px;
+            margin-bottom: 8px;
           }
         }
       `}</style>
