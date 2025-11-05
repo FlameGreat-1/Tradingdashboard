@@ -430,7 +430,7 @@ const Header: React.FC<HeaderProps> = ({
             </form>
           </div>
 
-          <div className="desktop-actions flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <Image
               src="/assets/header/icons/account.svg"
               alt="Account"
@@ -462,17 +462,16 @@ const Header: React.FC<HeaderProps> = ({
               className="cursor-pointer select-none"
               onClick={handleAvatarClick}
             />
+
+            <div 
+              className={`hamburger-menu ${isMobileMenuOpen ? 'open' : ''}`}
+              onClick={toggleMobileMenu}
+            >
+              <div className="hamburger-line"></div>
+              <div className="hamburger-line"></div>
+              <div className="hamburger-line"></div>
+            </div>
           </div>
-
-        </div>
-
-        <div 
-          className={`hamburger-menu ${isMobileMenuOpen ? 'open' : ''}`}
-          onClick={toggleMobileMenu}
-        >
-          <div className="hamburger-line"></div>
-          <div className="hamburger-line"></div>
-          <div className="hamburger-line"></div>
         </div>
       </header>
 
