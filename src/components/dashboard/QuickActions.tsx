@@ -21,32 +21,32 @@ const defaultActions: QuickAction[] = [
   {
     id: 'new-order',
     label: 'New Order',
-    icon: 'plus',
-    variant: 'primary',
+    icon: 'plus' as const,
+    variant: 'primary' as const,
     onClick: () => console.log('New Order clicked'),
   },
   {
     id: 'market-watch',
     label: 'Market Watch',
-    icon: 'chart',
-    variant: 'secondary',
+    icon: 'chart' as const,
+    variant: 'secondary' as const,
     onClick: () => console.log('Market Watch clicked'),
   },
   {
     id: 'portfolio',
     label: 'Portfolio',
-    icon: 'wallet',
-    variant: 'secondary',
+    icon: 'wallet' as const,
+    variant: 'secondary' as const,
     onClick: () => console.log('Portfolio clicked'),
   },
   {
     id: 'analysis',
     label: 'Analysis',
-    icon: 'grid',
-    variant: 'ghost',
+    icon: 'grid' as const,
+    variant: 'ghost' as const,
     onClick: () => console.log('Analysis clicked'),
   },
-];
+] as const;
 
 const QuickActions: React.FC<QuickActionsProps> = ({
   actions = defaultActions,
@@ -71,3 +71,9 @@ const QuickActions: React.FC<QuickActionsProps> = ({
 };
 
 export default QuickActions;
+
+
+
+
+
+
