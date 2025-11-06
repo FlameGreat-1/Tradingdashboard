@@ -24,35 +24,35 @@ const NAVIGATION_ITEMS: NavigationItem[] = [
     icon: '/assets/sidebar/icons/menu.svg',
     label: 'Menu', 
     ariaLabel: 'Open Menu',
-    iconSize: 24
+    iconSize: 28
   },
   { 
     href: '/dashboard/add', 
     icon: '/assets/sidebar/icons/widget.svg',
     label: 'Add', 
     ariaLabel: 'Add New Item',
-    iconSize: 24
+    iconSize: 36
   },
   { 
     href: '/dashboard/new-order', 
     icon: '/assets/sidebar/icons/Trade.svg',
     label: 'New Order', 
     ariaLabel: 'Create New Order',
-    iconSize: 24
+    iconSize: 36
   },
   { 
     href: '/dashboard/analytics', 
     icon: '/assets/sidebar/icons/analytics.svg',
     label: 'Analytics', 
     ariaLabel: 'View Analytics',
-    iconSize: 24
+    iconSize: 36
   },
   { 
     href: '/dashboard/wallet', 
     icon: '/assets/sidebar/icons/wallet.svg',
     label: 'Wallet', 
     ariaLabel: 'Access Wallet',
-    iconSize: 24
+    iconSize: 28
   },
 ];
 
@@ -143,17 +143,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       <style jsx>{`
-        /* CRITICAL: Design token variables for consistency */
-        :root {
-          --sidebar-width: 48px;
-          --sidebar-gap: 24px;
-          --icon-size: 24px;
-          --active-indicator-width: 3px;
-          --active-indicator-height: 32px;
-          --glow-opacity: 0.12;
-          --glow-radius: 18px;
-        }
-
         .sidebar-container {
           position: fixed;
           left: 0;
@@ -166,7 +155,6 @@ const Sidebar: React.FC<SidebarProps> = ({
           background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
           border-right: 1px solid rgba(255, 255, 255, 0.08);
           overflow: hidden;
-          padding: 16px 0;
         }
 
         .logo-container {
@@ -174,22 +162,12 @@ const Sidebar: React.FC<SidebarProps> = ({
           align-items: center;
           justify-content: center;
           width: 100%;
-          height: 48px;
-          margin-bottom: 24px;
+          height: 40px;
+          margin-bottom: 8px;
           padding: 0;
           cursor: pointer;
-          transition: opacity 0.2s ease;
         }
 
-        .logo-container:hover {
-          opacity: 0.85;
-        }
-
-        .logo-container:active {
-          transform: scale(0.96);
-        }
-
-        /* FIXED: Navigation button spacing matches Figma (24px gap) */
         .nav-button {
           position: relative;
           display: flex;
@@ -197,137 +175,74 @@ const Sidebar: React.FC<SidebarProps> = ({
           justify-content: center;
           width: 100%;
           height: 48px;
-          margin-bottom: 24px;
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          margin-bottom: 4px;
+          transition: all 0.2s ease-in-out;
           cursor: pointer;
           padding: 0;
           background-color: transparent;
           border: none;
-          border-radius: 0;
+          border-radius: 8px;
           -webkit-tap-highlight-color: transparent;
         }
 
-        .nav-button:last-of-type {
+        .nav-button:last-child {
           margin-bottom: 0;
         }
 
-        .nav-button:hover .icon-wrapper {
-          transform: scale(1.08);
-        }
-
         .nav-button:active {
-          transform: scale(0.96);
+          transform: scale(0.95);
         }
 
-        /* FIXED: Active indicator matches Figma specs */
         .active-indicator {
           position: absolute;
-          left: 0;
+          left: 2px;
           top: 50%;
           transform: translateY(-50%);
-          width: 3px;
-          height: 32px;
-          background: linear-gradient(180deg, #E85102 0%, #FF6B1A 100%);
-          border-radius: 0 2px 2px 0;
-          box-shadow: 0 0 8px rgba(232, 81, 2, 0.4);
+          width: 2px;
+          height: 24px;
+          background-color: #E85102;
+          border-radius: 8px;
         }
 
-        /* FIXED: Active glow effect with proper opacity and blur */
         .active-glow {
           position: absolute;
-          inset: 0;
+          inset: 6px;
           pointer-events: none;
-          border-radius: 50%;
-          background: radial-gradient(
-            circle at center,
-            rgba(232, 81, 2, 0.15) 0%,
-            rgba(232, 81, 2, 0.08) 40%,
-            rgba(232, 81, 2, 0) 70%
-          );
-          filter: blur(8px);
-          opacity: 1;
-          animation: pulse 2s ease-in-out infinite;
         }
 
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 0.8;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 1;
-            transform: scale(1.05);
-          }
-        }
-
-        /* FIXED: Icon wrapper for proper centering */
         .icon-wrapper {
           position: relative;
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 24px;
-          height: 24px;
-          transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          z-index: 1;
+          transition: all 0.2s ease-in-out;
         }
 
-        /* CRITICAL: SVG icon rendering optimization */
-        .icon-wrapper img {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-          image-rendering: -webkit-optimize-contrast;
-          image-rendering: crisp-edges;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-        }
-
-        .nav-container {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          padding: 0;
-        }
-
-        .nav-items {
-          display: flex;
-          flex-direction: column;
-          padding: 0 12px;
-        }
-
-        /* FIXED: Actions container positioning */
         .actions-container {
           position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
+          margin-bottom: 32px;
           margin-top: auto;
-          margin-bottom: 24px;
-          padding: 0 8px;
         }
 
         .action-button {
           position: absolute;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 36px;
-          height: 24px;
+          left: 0;
+          width: 100%;
+          height: 40px;
           background: transparent;
           border: 0;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.2s ease-in-out;
           padding: 0;
-          border-radius: 6px;
+          border-radius: 8px;
           -webkit-tap-highlight-color: transparent;
         }
 
-        .action-button:hover {
-          background: rgba(255, 255, 255, 0.05);
-        }
-
         .action-button:active {
-          transform: translateX(-50%) scale(0.95);
+          transform: scale(0.95);
         }
 
         .action-button.settings {
@@ -338,97 +253,72 @@ const Sidebar: React.FC<SidebarProps> = ({
           bottom: 0;
         }
 
-        /* FIXED: Tooltip styling with proper contrast */
         .tooltip {
           position: fixed;
-          background: linear-gradient(135deg, #1f1f1f 0%, #1a1a1a 100%);
+          background-color: #1a1a1a;
           color: #ffffff;
-          padding: 8px 14px;
-          border-radius: 8px;
+          padding: 6px 12px;
+          border-radius: 6px;
           font-size: 13px;
           font-weight: 500;
           white-space: nowrap;
           pointer-events: none;
           z-index: 9999;
-          box-shadow: 
-            0 4px 12px rgba(0, 0, 0, 0.5),
-            0 0 0 1px rgba(255, 255, 255, 0.1);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+          border: 1px solid #2a2a2a;
           transform: translateY(-50%);
-          letter-spacing: 0.01em;
-          -webkit-font-smoothing: antialiased;
         }
 
-        .tooltip::before {
-          content: '';
-          position: absolute;
-          left: -4px;
-          top: 50%;
-          transform: translateY(-50%);
-          width: 0;
-          height: 0;
-          border-top: 4px solid transparent;
-          border-bottom: 4px solid transparent;
-          border-right: 4px solid #1a1a1a;
-        }
-
-        /* Responsive adjustments */
         @media (max-width: 768px) {
           .sidebar-container {
-            padding: 12px 0;
+            width: ${width}px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
           }
 
           .logo-container {
-            height: 44px;
-            margin-bottom: 20px;
+            height: 40px;
+            margin-bottom: 8px;
           }
 
           .nav-button {
-            height: 44px;
-            margin-bottom: 20px;
+            height: 48px;
+            margin-bottom: 4px;
           }
 
           .actions-container {
             margin-bottom: 60px;
+            padding-bottom: 0;
           }
         }
 
         @media (max-width: 480px) {
+          .sidebar-container {
+            width: ${width}px;
+          }
+
           .logo-container {
             height: 40px;
-            margin-bottom: 16px;
           }
 
           .nav-button {
-            height: 40px;
-            margin-bottom: 16px;
+            height: 48px;
           }
 
           .actions-container {
-            margin-bottom: 80px;
+            margin-bottom: 100px;
+            padding-bottom: 0;
           }
         }
 
         @media (max-height: 700px) {
-          .nav-button {
-            margin-bottom: 20px;
-          }
-          
           .actions-container {
-            margin-bottom: 60px;
+            margin-bottom: 80px !important;
           }
         }
 
         @media (max-height: 600px) {
-          .logo-container {
-            margin-bottom: 16px;
-          }
-
-          .nav-button {
-            margin-bottom: 16px;
-          }
-          
           .actions-container {
-            margin-bottom: 40px;
+            margin-bottom: 60px !important;
           }
         }
       `}</style>
@@ -437,19 +327,12 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div 
           className="logo-container"
           onClick={() => handleNavClick('/dashboard')}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              handleNavClick('/dashboard');
-            }
-          }}
         >
           <Image
             src="/assets/sidebar/icons/logo.svg"
             alt="Logo"
-            width={24}
-            height={24}
+            width={28}
+            height={28}
             priority
             style={{ 
               userSelect: 'none',
@@ -457,9 +340,10 @@ const Sidebar: React.FC<SidebarProps> = ({
           />
         </div>
 
-        <div className="nav-container">
-          <div className="nav-items">
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 0 }}>
+          <div style={{ paddingTop: 0 }}>
             {NAVIGATION_ITEMS.map((item) => {
+              const iconSize = item.iconSize || 28;
               const isActive = isActiveRoute(item.href);
               
               return (
@@ -468,25 +352,47 @@ const Sidebar: React.FC<SidebarProps> = ({
                   onClick={() => handleNavClick(item.href)}
                   className="nav-button"
                   aria-label={item.ariaLabel}
-                  aria-current={isActive ? 'page' : undefined}
                   onMouseEnter={(e) => handleMouseEnter(item.label, e)}
                   onMouseLeave={handleMouseLeave}
                 >
                   {isActive && (
                     <>
                       <div className="active-indicator" />
-                      <div className="active-glow" />
+                      <svg
+                        className="active-glow"
+                        viewBox="0 0 40 40"
+                      >
+                        <defs>
+                          <radialGradient id="cellGradient">
+                            <stop offset="0%" stopColor="rgba(232, 81, 2, 0)" />
+                            <stop offset="70%" stopColor="rgba(232, 81, 2, 0.08)" />
+                            <stop offset="100%" stopColor="rgba(232, 81, 2, 0.15)" />
+                          </radialGradient>
+                        </defs>
+                        <path
+                          d="M 20 2 A 18 18 0 1 1 19.99 2"
+                          fill="url(#cellGradient)"
+                          stroke="none"
+                        />
+                      </svg>
                     </>
                   )}
 
-                  <div className="icon-wrapper">
+                  <div 
+                    className="icon-wrapper"
+                    style={{
+                      width: `${iconSize}px`,
+                      height: `${iconSize}px`,
+                    }}
+                  >
                     <Image
                       src={item.icon}
-                      alt=""
-                      width={24}
-                      height={24}
+                      alt={item.label}
+                      width={iconSize}
+                      height={iconSize}
                       style={{ 
                         userSelect: 'none',
+                        transition: 'all 0.2s ease-in-out'
                       }}
                     />
                   </div>
@@ -500,7 +406,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               src="/assets/sidebar/icons/Setting-support.svg"
               alt="Settings and Support"
               width={32}
-              height={56}
+              height={53}
               style={{ 
                 userSelect: 'none',
                 display: 'block'
